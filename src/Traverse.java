@@ -69,5 +69,46 @@ public class Traverse {
     v45.neighbors = new ArrayList<>(List.of(v23));
     v23.neighbors = new ArrayList<>(List.of());
     v67.neighbors = new ArrayList<>(List.of(v91));
+
+    // printGossipers(alice);
+    System.out.println(minReachable(graph, 78));
   }
+
+  public static int minReachable (Map<Integer, Set<Integer>> graph, int start){
+    if (graph == null) throw new NullPointerException("Cannot find minimum of missing graph");
+    return minReachable(graph, start, new HashSet<>());
+  }
+
+  private static int minReachable(Map<Integer, Set<Integer>> graph, int current, Set<Integer> visited){
+    //if (graph == null) return Integer.MAX_VALUE; // could throw an exception for null
+    if(visited.contains(current)) return Integer.MAX_VALUE;
+    visited.add(current);
+
+    int min = current;
+
+    for(int neighbor : graph.get(current)) {
+      int minFromNeighbor = minReachable(graph, neighbor, visited);
+      if (minFromNeighbor < min) min = minFromNeighbor;
+    }
+
+    return min;
+  }
+
+  public static void printGossipers(Person initial){
+    Set<Person> visited = new HashSet<>();
+    printGossipers(initial, visited);
+  }
+
+  private static void printGossipers(Person current, Set<Person> visited){
+    if (current == null || visited.contains(current)) return;
+
+    visited.add(current);
+    System.out.println(current.getName());
+
+    // explort all confidants
+    for (Person confidant : current.getConfidants()){
+      printGossipers(confidant, visited);
+    }
+  }
+
 }
